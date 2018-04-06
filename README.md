@@ -9,40 +9,40 @@ Make sure to **__always__** add *assert.js* before *cookieHandler.js*
 
 # Examples
 ### getAll
-Takes no arguments and the fisrt time gets the cookies from the browser, after that it gets the cookies from the module local scope, it returns a collection on key value pairs
+Takes no arguments
+
+The fisrt time gets the cookies from the browser, after that it gets the cookies from the module local scope
+
+Returns a collection of key value pairs
 ```javascript
 cookieHandler.getAll();
-// output
-we got cookies from browser
-(5) [{…}, {…}, {…}, {…}, {…}]
-0: {name: "SID", value: "9wWiZpAYVqvh1sg1iLNneQenCVhpHVDeM8jWkc1B4Qm08Z7ocvoqaKiTAkdpsvhK768N0A."}
-1: {name: "APISID", value: "QPFZCFqUKld4orhA/AfcAXNsqdM-q5jv1c"}
-2: {name: "SAPISID", value: "ZfaSh-P2nMZAApIX/AfxLoDU2xx8QeOu2T"}
-3: {name: "1P_JAR", value: "2018-4-6-0"}
-4: {name: "SIDCC", value: "AEfoLeZKVy-XMuIM4oVpH8HFgGqwGVyUB3EdUXge_R6H8jOW1dx26BIdfVBZ09zWzu22oRW94FA"}
-
-cookieHandler.getAll();
-// output
-we got cookies from local scope
-(5) [{…}, {…}, {…}, {…}, {…}]
-0: {name: "SID", value: "9wWiZpAYVqvh1sg1iLNneQenCVhpHVDeM8jWkc1B4Qm08Z7ocvoqaKiTAkdpsvhK768N0A."}
-1: {name: "APISID", value: "QPFZCFqUKld4orhA/AfcAXNsqdM-q5jv1c"}
-2: {name: "SAPISID", value: "ZfaSh-P2nMZAApIX/AfxLoDU2xx8QeOu2T"}
-3: {name: "1P_JAR", value: "2018-4-6-0"}
-4: {name: "SIDCC", value: "AEfoLeZKVy-XMuIM4oVpH8HFgGqwGVyUB3EdUXge_R6H8jOW1dx26BIdfVBZ09zWzu22oRW94FA"}
 ```
 ### get
-Takes as argument the name of a cookie as string, throws an exception if the argument is not a string, returns a key value pair if the cookie is found, undefined otherwise
+Takes as argument the name of a cookie as string.
+
+Throws an exception if the argument is not a string
+
+Returns a key value pair if the cookie is found, null otherwise
 ```javascript
-cookieHandler.get(404);
-// output
-Uncaught 404 is not a string
-
-cookieHandler.get('SID');
-// output
-{name: "SID", value: "9wWiZpAYVqvh1sg1iLNneQenCVhpHVDeM8jWkc1B4Qm08Z7ocvoqaKiTAkdpsvhK768N0A."}
-
-cookieHandler.get('404');
-// output
-undefined
+cookieHandler.get('test');
 ```
+### set
+Takes as arguments:
+  1 the name of a cookie as string
+  2 the value of the cookie that can be any string, number, array or object
+  3 the days in which the cookie will expire, this is optional
+ 
+Throws an exception if:
+  1 the argument name is not a string
+  2 the argument value is null or undefined
+  3 throws an exception if the argument days is not a number 
+```javascript
+cookieHandler.set('test', 404);
+cookieHandler.set('test', 404, 10);
+```
+### remove
+Takes as argument the name of a cookie as string.
+
+Throws an exception if the argument is not a string
+```javascript
+cookieHandler.remove('test');
