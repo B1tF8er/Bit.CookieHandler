@@ -28,14 +28,16 @@ cookieHandler.get('test');
 ```
 ### set
 Takes as arguments:
-  1 the name of a cookie as string
-  2 the value of the cookie that can be any string, number, array or object
-  3 the days in which the cookie will expire, this is optional and must be a number
+
+  ⋅⋅⋅1 the name of a cookie as string
+  ⋅⋅⋅2 the value of the cookie that can be any string, number, array or object
+  ⋅⋅⋅3 the days in which the cookie will expire, this is optional and must be a number
  
 Throws an exception if:
-  1 the argument name is not a string
-  2 the argument value is null or undefined
-  3 throws an exception if the argument days is not a number 
+
+  ⋅⋅⋅1 the argument name is not a string
+  ⋅⋅⋅2 the argument value is null or undefined
+  ⋅⋅⋅3 throws an exception if the argument days is not a number 
 ```javascript
 cookieHandler.set('test', 404);
 cookieHandler.set('test', 404, 10);
