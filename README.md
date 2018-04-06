@@ -11,7 +11,7 @@ Make sure to **__always__** add *assert.js* before *cookieHandler.js*
 ### getAll
 Takes no arguments
 
-The fisrt time gets the cookies from the browser, after that it gets the cookies from the module local scope
+The first time gets the cookies from the browser, after that it gets the cookies from the module local scope
 
 Returns a collection of key value pairs
 ```javascript
@@ -30,7 +30,7 @@ cookieHandler.get('test');
 Takes as arguments:
   1 the name of a cookie as string
   2 the value of the cookie that can be any string, number, array or object
-  3 the days in which the cookie will expire, this is optional
+  3 the days in which the cookie will expire, this is optional and must be a number
  
 Throws an exception if:
   1 the argument name is not a string
