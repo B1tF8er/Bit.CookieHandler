@@ -8,7 +8,7 @@ var cookieHandler = cookieHandler || (function cookieHandlerModule(assert) {
     var local = {
         cookies: [],
         totalCookies: 0,
-        isDebug: true
+        isDebug: false
     };
 
     /**
@@ -74,11 +74,18 @@ var cookieHandler = cookieHandler || (function cookieHandlerModule(assert) {
     function getCookie(name) {
         assert.isString(name);
 
-        var tempCookies = local.cookies;
+        let tempCookies = getCookies();
+        let cookie = null;
 
-        return tempCookies.any() ?
-            tempCookies.filter(cookie => cookie.name.toLowerCase() === name.toLowerCase()).shift() :
-            null;
+        if (tempCookies.any()) {
+            cookie = tempCookies
+                .filter(cookie => 
+                    cookie.name.toLowerCase() === name.toLowerCase()
+                )
+                .shift();
+        }
+
+        return cookie || null;
     }
 
     /**
@@ -91,7 +98,10 @@ var cookieHandler = cookieHandler || (function cookieHandlerModule(assert) {
         assert.isString(name);
         assert.notNull(value);
         assert.notUndefined(value);
-        arguments.length === 3 ? assert.isNumber(days) : true;
+
+        if (arguments.length === 3) {
+            assert.isNumber(days);
+        }
 
         var expires = '';
         var date = null;
@@ -115,7 +125,7 @@ var cookieHandler = cookieHandler || (function cookieHandlerModule(assert) {
     function removeCookie(name) {
         assert.isString(name);
 
-        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        setCookie(name, '', -10);
 
         // update local scope cookies
         getCookies();
