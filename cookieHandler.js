@@ -1,144 +1,97 @@
-/**
- * Cookie handler module
- */
-var cookieHandler = cookieHandler || (function cookieHandlerModule(assert) {
-    /**
-     * Local module variables
-     */
-    var local = {
-        cookies: [],
-        totalCookies: 0,
-        isDebug: false
-    };
+class CookieHandler {
+  constructor(assert, isDebug = false) {
+    this.assert = assert;
 
-    /**
-     * IIFE to modify the array prototype
-     */
-    (function modifyArrayPrototype() {
-        if (!Array.prototype.any) {
-            debug('Array.prototype.any added');
+    this.cookies = [];
+    this.totalCookies = 0;
+    this.isDebug = isDebug;
 
-            Array.prototype.any = function anyElementsInArray() {
-                return this.length > 0;
-            };
-        } else {
-            debug('Array.prototype.any already exists');
-        }
-    })();
+    if (!Array.prototype.any) {
+      debug("Array.prototype.any added");
 
-    /**
-     * Logs a message to console when debug is active
-     * @param {string} message 
-     */
-    function debug(message) {
-        assert.isString(name);
+      Array.prototype.any = function anyElementsInArray() {
+        return this.length > 0;
+      };
+    } else {
+      debug("Array.prototype.any already exists");
+    }
+  }
 
-        if (local.isDebug) {
-            console.log(message);
-        }
+  debug(message) {
+    this.assert.isString(name);
+
+    if (this.isDebug) {
+      console.log(message);
+    }
+  }
+
+  getCookies() {
+    var cookiesSplitted = document.cookie.split(";");
+    var thereAreNoLocalCookies = cookiesSplitted.any() && !this.cookies.any();
+    var cookiesChanged = this.totalCookies !== cookiesSplitted.length;
+
+    if (thereAreNoLocalCookies || cookiesChanged) {
+      this.cookies = cookiesSplitted.map(cookie => {
+        var nameValue = cookie.split("=").map(value => value.trim());
+
+        return {
+          name: nameValue[0],
+          value: nameValue[1]
+        };
+      });
+
+      this.totalCookies = this.cookies.length;
+
+      debug("we got cookies from browser");
+    } else {
+      debug("we got cookies from local scope");
     }
 
-    /**
-     * Gets all the cookies from the browser or the local scope
-     */
-    function getCookies() {
-        var cookiesSplitted = document.cookie.split(';');
-        var thereAreNoLocalCookies = cookiesSplitted.any() && !local.cookies.any();
-        var cookiesChanged = local.totalCookies !== cookiesSplitted.length;
+    return this.cookies;
+  }
 
-        if (thereAreNoLocalCookies || cookiesChanged) {
-            local.cookies = cookiesSplitted
-                .map(cookie => {
-                    var nameValue = cookie.split('=').map(value => value.trim());
+  getCookie(name) {
+    this.assert.isString(name);
 
-                    return {
-                        name: nameValue[0],
-                        value: nameValue[1]
-                    };
-                });
+    let tempCookies = this.getCookies();
+    let cookie = null;
 
-            local.totalCookies = local.cookies.length;
-
-            debug('we got cookies from browser');
-        } else {
-            debug('we got cookies from local scope');
-        }
-
-        return local.cookies;
+    if (tempCookies.any()) {
+      cookie = tempCookies
+        .filter(cookie => cookie.name.toLowerCase() === name.toLowerCase())
+        .shift();
     }
 
-    /**
-     * Gets a cookie by name from the local scope
-     * @param {string} name name of the cookie
-     */
-    function getCookie(name) {
-        assert.isString(name);
+    return cookie || null;
+  }
 
-        let tempCookies = getCookies();
-        let cookie = null;
+  setCookie(name, value, days) {
+    this.assert.isString(name);
+    this.assert.notNull(value);
+    this.assert.notUndefined(value);
 
-        if (tempCookies.any()) {
-            cookie = tempCookies
-                .filter(cookie => 
-                    cookie.name.toLowerCase() === name.toLowerCase()
-                )
-                .shift();
-        }
-
-        return cookie || null;
+    if (arguments.length === 3) {
+      this.assert.isNumber(days);
     }
 
-    /**
-     * Sets a cookie in the browser with an optional expiration date
-     * @param {string} name name of the cookie
-     * @param {any} value value of the cookie
-     * @param {number} days days to expire the cookie
-     */
-    function setCookie(name, value, days) {
-        assert.isString(name);
-        assert.notNull(value);
-        assert.notUndefined(value);
+    var expires = "";
+    var date = null;
 
-        if (arguments.length === 3) {
-            assert.isNumber(days);
-        }
-
-        var expires = '';
-        var date = null;
-
-        if (days) {
-            date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = '; expires=' + date.toUTCString();
-        }
-
-        document.cookie = name + '=' + (value || '') + expires + '; path=/';
-
-        // update local scope cookies
-        getCookies();
+    if (days) {
+      date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      expires = "; expires=" + date.toUTCString();
     }
 
-    /**
-     * Removes a cookie by name from the browser
-     * @param {string} name name of the cookie to be removed
-     */
-    function removeCookie(name) {
-        assert.isString(name);
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
 
-        setCookie(name, '', -10);
+    this.getCookies();
+  }
 
-        // update local scope cookies
-        getCookies();
-    }
+  removeCookie(name) {
+    this.assert.isString(name);
 
-    /**
-     * Exposed API functionality
-     */
-    var API = {
-        getAll: getCookies,
-        get: getCookie,
-        set: setCookie,
-        remove: removeCookie
-    };
-    return API;
-})(assert);
+    this.setCookie(name, "", -10);
+    this.getCookies();
+  }
+}
